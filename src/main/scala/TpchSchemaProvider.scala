@@ -122,6 +122,6 @@ class TpchSchemaProvider(sc: SparkContext, inputDir: String) {
   val supplier = dfMap.get("supplier").get
 
   dfMap.foreach {
-    case (key, value) => value.createOrReplaceTempView(key)
+    case (key, value) => value.registerTempTable(key)
   }
 }

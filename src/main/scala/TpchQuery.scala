@@ -42,11 +42,11 @@ object TpchQuery {
       df.write.mode("overwrite").format("com.databricks.spark.csv").option("header", "true").save(outputDir + "/" + className)
   }
 
-  def executeQueries(sc: SparkContext, schemaProvider: TpchSchemaProvider, queryNum: Int): ListBuffer[(String, Float)] = {
+  def executeQueries(sc: SparkContext, schemaProvider: TpchSchemaProvider, queryNum: Int, args: Array[String]): ListBuffer[(String, Float)] = {
 
     // if set write results to hdfs, if null write to stdout
     // val OUTPUT_DIR: String = "/tpch"
-    val OUTPUT_DIR: String = "file://" + new File(".").getAbsolutePath() + "/dbgen/output"
+    val OUTPUT_DIR: String = "file://" + new File(".").getAbsolutePath() + "/dbgen/output/" + f"S${args(1).toInt}%02d_E${args(2).toInt}%02d_P${args(3)}%s_Q${args(0).toInt}%02d_R${args(4).toInt}%02d"
 
     val results = new ListBuffer[(String, Float)]
 
@@ -77,22 +77,31 @@ object TpchQuery {
   def main(args: Array[String]): Unit = {
 
     var queryNum = 0;
-    if (args.length > 0)
+    var scaleNum = 0;
+    var executorNum = 0;
+    var broadcastProtocol = "Torrent";
+    var runIndex = 0;
+    if (args.length > 0) {
       queryNum = args(0).toInt
+      scaleNum = args(1).toInt
+      executorNum = args(2).toInt
+      broadcastProtocol = args(3)
+      runIndex = args(4).toInt
+    }
 
-    val conf = new SparkConf().setAppName("Simple Application")
+    val conf = new SparkConf().setAppName(f"SimpleApplication S${scaleNum}%02d E${executorNum}%02d P${broadcastProtocol}%s Q${queryNum}%02d R${runIndex}%02d")
     val sc = new SparkContext(conf)
 
     // read files from local FS
     val INPUT_DIR = "file://" + new File(".").getAbsolutePath() + "/dbgen"
 
     // read from hdfs
-    // val INPUT_DIR: String = "/dbgen"
+    //val INPUT_DIR: String = "/dbgen"
 
     val schemaProvider = new TpchSchemaProvider(sc, INPUT_DIR)
 
     val output = new ListBuffer[(String, Float)]
-    output ++= executeQueries(sc, schemaProvider, queryNum)
+    output ++= executeQueries(sc, schemaProvider, queryNum, args)
 
     val outFile = new File("TIMES.txt")
     val bw = new BufferedWriter(new FileWriter(outFile, true))

@@ -22,3 +22,5 @@ dbgen/*.tbl
 dbgen/*.o
 dbgen/dbgen
 dbgen/qgen
+
+.idea/
