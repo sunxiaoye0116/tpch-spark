@@ -39,7 +39,7 @@ object TpchQuery {
       df.collect().foreach(println)
     else
       //df.write.mode("overwrite").json(outputDir + "/" + className + ".out") // json to avoid alias
-      df.write.mode("overwrite").format("com.databricks.spark.csv").option("header", "true").save(outputDir + "/" + className)
+      df.write.mode("overwrite").format("com.databricks.spark.csv").option("header", "true").save(outputDir + "/" + className) 
   }
 
   def executeQueries(sc: SparkContext, schemaProvider: TpchSchemaProvider, queryNum: Int, args: Array[String]): ListBuffer[(String, Float)] = {
@@ -102,10 +102,10 @@ object TpchQuery {
 
     val output = new ListBuffer[(String, Float)]
     output ++= executeQueries(sc, schemaProvider, queryNum, args)
-
+    
     val outFile = new File("TIMES.txt")
     val bw = new BufferedWriter(new FileWriter(outFile, true))
-
+    
     output.foreach {
       case (key, value) => bw.write(f"${key}%s\t${value}%1.8f\n")
     }
