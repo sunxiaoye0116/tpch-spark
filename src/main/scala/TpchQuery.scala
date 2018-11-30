@@ -94,7 +94,7 @@ object TpchQuery {
 
     // read files from local FS
     // val INPUT_DIR = "file://" + new File(".").getAbsolutePath() + "/dbgen"
-    val INPUT_DIR: String = if (args(5) == "hdfs") "/dbgen" else "file:///home/xs6/github/tpch-spark/dbgen"
+    val INPUT_DIR: String = if (args(5) == "hdfs") "/dbgen" else "file:///home/[USERNAME]/github/tpch-spark/dbgen"
 
     // read from hdfs
     // val INPUT_DIR: String = "/dbgen"
